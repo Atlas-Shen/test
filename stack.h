@@ -21,7 +21,12 @@ void make_empty(Stack stack);
 void push(ElementType element, Stack stack);
 ElementType top(Stack stack);
 void pop(Stack stack);
+ElementType top_and_pop(Stack stack);
+void print_stack(Stack stack);
 
+/**
+ * the node definition should be placed in the implementation file
+ */
 struct Node {
 	ElementType element;
 	pointer_to_node next;
@@ -32,14 +37,13 @@ bool is_empty(Stack stack) {
 }
 
 Stack create_stack() {
-	Stack stack;
-	stack = malloc(sizeof(struct Node));
+	Stack stack = malloc(sizeof(struct Node));
 	if (stack == NULL) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(EXIT_FAILURE);
 	}
 	else {
-		make_empty(stack);
+		stack->next = NULL;
 		return stack;
 	}
 }
@@ -55,14 +59,12 @@ void make_empty(Stack stack) {
 		exit(EXIT_FAILURE);
 	}
 	else
-		while (!is_empty(stack)) {
+		while (!is_empty(stack))
 			pop(stack);
-		}
 }
 
 void push(ElementType element, Stack stack) {
-	pointer_to_node temp_node;
-	temp_node = malloc(sizeof(struct Node));
+	pointer_to_node temp_node = malloc(sizeof(struct Node));
 	if (temp_node == NULL) {
 		fprintf(stderr, "Out of memory!\n");
 		exit(EXIT_FAILURE);
@@ -75,24 +77,52 @@ void push(ElementType element, Stack stack) {
 }
 
 ElementType top(Stack stack) {
-	if (!is_empty(stack))
-		return stack->next->element;
-	else {
+	if (is_empty(stack)) {
 		fprintf(stderr, "Empty stack!\n");
 		exit(EXIT_FAILURE);
 	}
+	else
+		return stack->next->element;
 }
 
 void pop(Stack stack) {
-	pointer_to_node first_node;
 	if (is_empty(stack)) {
 		fprintf(stderr, "Empty stack!\n");
 		exit(EXIT_FAILURE);
 	}
 	else {
-		first_node = stack->next;
+		pointer_to_node first_node = stack->next;
 		stack->next = stack->next->next;
 		free(first_node);
+	}
+}
+
+ElementType top_and_pop(Stack stack) {
+	if (is_empty(stack)) {
+		fprintf(stderr, "Empty stack!\n");
+		exit(EXIT_FAILURE);
+	}
+	else {
+		ElementType temp_element = stack->next->element;
+		pointer_to_node first_node = stack->next;
+		stack->next = stack->next->next;
+		free(first_node);
+		return temp_element;
+	}
+}
+
+/**
+ * print_element needs to be implemented separately and specifically in the implementation file
+ */
+void print_stack(Stack stack) {
+	if (is_empty(stack))
+		printf("Empty stack!\n");
+	else {
+		stack = stack->next;
+		while (stack != NULL) {
+			print_element(stack->element);
+			stack = stack->next;
+		}
 	}
 }
 
