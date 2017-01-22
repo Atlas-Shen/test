@@ -33,7 +33,12 @@ struct Node {
 };
 
 bool is_empty(Queue queue) {
-	return queue->next == NULL;
+	if (queue == NULL) {
+		fprintf(stderr, "Must use create_queue first!\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		return queue->next == NULL;
 }
 
 /**
@@ -128,10 +133,15 @@ ElementType front_and_dequeue(Queue queue) {
  * print_element needs to be implemented separately and specifically in the implementation file
  */
 void print_queue(Queue queue) {
-	queue = queue->next;
-	while (queue != NULL) {
-		print_element(queue->element);
+	if (is_empty(queue))
+		printf("Empty queue!\n");
+	else {
 		queue = queue->next;
+		while (queue != NULL) {
+			print_element(queue->element);
+			queue = queue->next;
+		}
+		putchar('\n');
 	}
 }
 

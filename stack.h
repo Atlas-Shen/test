@@ -33,7 +33,12 @@ struct Node {
 };
 
 bool is_empty(Stack stack) {
-	return stack->next == NULL;
+	if (stack == NULL) {
+		fprintf(stderr, "Must use create_stack first!\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		return stack->next == NULL;
 }
 
 Stack create_stack() {
@@ -123,6 +128,7 @@ void print_stack(Stack stack) {
 			print_element(stack->element);
 			stack = stack->next;
 		}
+		putchar('\n');
 	}
 }
 
