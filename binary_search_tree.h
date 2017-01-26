@@ -7,13 +7,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 struct Node;
 typedef struct Node *Position;
 typedef struct Node *BinarySearchTree;
 
-BinarySearchTree make_empty(BinarySearchTree tree);
+void make_empty(BinarySearchTree tree);
 Position find(ElementType element, BinarySearchTree tree);
 Position find_min(BinarySearchTree tree);
 Position find_max(BinarySearchTree tree);
@@ -31,18 +30,18 @@ struct Node{
 	BinarySearchTree right;
 };
 
-BinarySearchTree make_empty(BinarySearchTree tree) {
+void make_empty(BinarySearchTree tree) {
 	if (tree != NULL) {
 		make_empty(tree->left);
 		make_empty(tree->right);
 		free(tree);
 	}
-	return NULL;
 }
 
 /**
- * We must make sure that the tree is not empty before we apply this function
- * @return return NULL means there is no such element in this tree
+ * We'd better make sure that the tree is not empty before we apply this function
+ * @return return the pointer to the found node,
+ *         return NULL means there is no such element in this tree
  */
 Position find(ElementType element, BinarySearchTree tree) {
 	if (tree == NULL)
@@ -57,7 +56,8 @@ Position find(ElementType element, BinarySearchTree tree) {
 
 /**
  * recursive version
- * @return return NULL means this tree is empty
+ * @return return the pointer to the node which has the minimum key,
+ *         return NULL means this tree is empty
  */
 Position find_min(BinarySearchTree tree) {
 	if (tree == NULL)
@@ -70,7 +70,8 @@ Position find_min(BinarySearchTree tree) {
 
 /**
  * recursive version
- * @return return NULL means this tree is empty
+ * @return return the pointer to the node which has the maximum key,
+ *         return NULL means this tree is empty
  */
 Position find_max(BinarySearchTree tree) {
 	if (tree == NULL)
@@ -92,6 +93,12 @@ Position find_max(BinarySearchTree tree) {
  * }
  */
 
+/**
+ * Operate on the current node, insert the element to the tree rooted at the current node
+ * @param element: element to be inserted
+ * @param tree: the current node to be operated on
+ * @return return the current node after the operation
+ */
 BinarySearchTree insert(ElementType element, BinarySearchTree tree) {
 	if (tree == NULL) {
 		tree = malloc(sizeof(struct Node));
@@ -112,6 +119,12 @@ BinarySearchTree insert(ElementType element, BinarySearchTree tree) {
 	return tree;
 }
 
+/**
+ * Operate on the current node, delete the element in the tree rooted at the current node
+ * @param element: element to be deleted
+ * @param tree: the current node to be operated on
+ * @return return the current node after the operation
+ */
 BinarySearchTree delete(ElementType element, BinarySearchTree tree) {
 	if (tree == NULL)
 		fprintf(stderr, "Element not found!\n");
@@ -121,6 +134,8 @@ BinarySearchTree delete(ElementType element, BinarySearchTree tree) {
 		tree->right = delete(element, tree->right);
 	else if (tree->left != NULL && tree->right != NULL) { // found element to be deleted and it has two children
 		// replace the current node with the smallest in the right subtree
+		// To avoid passing down the right subtree twice, we may need a helper method called delete_min()
+		// So we only need to pass down the right subtree once
 		ElementType temp_element;
 		tree->right = delete_min(&temp_element, tree->right);
 		tree->element = temp_element;
@@ -137,7 +152,11 @@ BinarySearchTree delete(ElementType element, BinarySearchTree tree) {
 }
 
 /**
- * the helper method of delete, to improve the efficiency
+ * The helper method of delete(), to improve efficiency
+ * @param pointer_to_element: use the pointer to the element
+ *                            to pass the value of the deleted element indirectly
+ * @param tree: the current node to be operated on
+ * @return return the current node after the operation
  */
 BinarySearchTree delete_min(ElementType *pointer_to_element, BinarySearchTree tree) {
 	if (tree == NULL)
